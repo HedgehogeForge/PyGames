@@ -1,0 +1,64 @@
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the display
+width, height = 800, 600
+window = pygame.display.set_mode((width, height))
+pygame.display.set_caption('Simple Ball Game')
+
+# Define colors
+black = (0, 0, 0)
+white = (255, 255, 255)
+
+# Ball settings
+ball_radius = 20
+ball_y_velocity = 0
+gravity = 0.001
+ball_y = 0
+ball_falling = False
+bounce_count = 0
+max_bounces = 3
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            ball_falling = True
+            ball_y = pygame.mouse.get_pos()[1]
+            ball_y_velocity = 0  # Reset the velocity
+            bounce_count = 0  # Reset the bounce count
+        elif event.type == pygame.QUIT:
+            running = False
+
+    # Get mouse position
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+    # Clear the screen
+    window.fill(black)
+
+    if ball_falling:
+        ball_y_velocity += gravity
+        ball_y += ball_y_velocity
+        if ball_y + ball_radius > window.get_height():
+            ball_y = window.get_height() - ball_radius
+            ball_y_velocity = -ball_y_velocity * 0.7  # Reduce velocity to simulate energy loss
+            bounce_count += 1
+            if bounce_count >= max_bounces:
+                ball_falling = False
+                ball_y_velocity = 0
+    else:
+        ball_y = mouse_y
+
+    # Draw the ball
+    pygame.draw.circle(window, white, (mouse_x, ball_y), ball_radius)
+
+    # Update the display
+    pygame.display.flip()
+
+# Quit Pygame
+pygame.quit()
+sys.exit()
